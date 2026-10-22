@@ -115,6 +115,36 @@ const PRODUCTOS_INICIALES = [
     descripcion: "Incluye Mate Imperial Algarrobo con fleje de Alpaca y virola de acero + Bombilla Pico Loro + Termo 1 L blanco acero Inox + Matera simil cuero + Chau lata yerba y azucarera",
     imagen: "/productos/comboLaNona.jpeg",
     stock: 10
+  },
+  {
+    id: 9,
+    nombre: "Mesita matera",
+    categoria: "accesorios",
+    precio: 21000,
+    destacado: false,
+    descripcion: "Mesita portatil, madera de pino.",
+    imagen: "/productos/mesitaMatera.jpeg",
+    stock: 10
+  },
+  {
+    id: 10,
+    nombre: "Grabados Personalizados",
+    categoria: "grabados",
+    precio: 16000,
+    destacado: false,
+    descripcion: "Grabados personalizados de virolas de acero.",
+    imagen: "/productos/grabadosVirolas.jpeg",
+    stock: 10
+  },
+  {
+    id: 11,
+    nombre: "Luz para bombilla",
+    categoria: "accesorios",
+    precio: 6100,
+    destacado: false,
+    descripcion: "Luz para Bombilla.",
+    imagen: "/productos/luzBombilla.jpeg",
+    stock: 10
   }
 ];
 
@@ -321,6 +351,8 @@ export default function App() {
               { id: "mates", label: "Mates" },
               { id: "bombillas", label: "Bombillas" },
               { id: "termos", label: "Termos" },
+              { id: "accesorios", label: "Accesorios" },
+              { id: "grabados", label: "Grabados" },
               { id: "combos", label: "Combos & Sets" },
             ].map((cat) => (
               <button
