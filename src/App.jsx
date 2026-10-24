@@ -38,7 +38,7 @@ const InstagramIcon = ({ className = "w-5 h-5" }) => (
 const PRODUCTOS_INICIALES = [
   {
     id: 1,
-    nombre: "Mate Imperial mixto",
+    nombre: "Mate Imperial mixto.",
     categoria: "mates",
     precio: 31500,
     destacado: true,
@@ -48,7 +48,7 @@ const PRODUCTOS_INICIALES = [
   },
   {
     id: 2,
-    nombre: "Mate Camionero",
+    nombre: "Mate Camionero.",
     categoria: "mates",
     precio: 29000,
     destacado: true,
@@ -58,7 +58,7 @@ const PRODUCTOS_INICIALES = [
   },
   {
     id: 3,
-    nombre: "Termo dorado 1.2L Acero Inox",
+    nombre: "Termo dorado 1.2L Acero Inox.",
     categoria: "termos",
     precio: 35000,
     destacado: false,
@@ -68,7 +68,7 @@ const PRODUCTOS_INICIALES = [
   },
   {
     id: 4,
-    nombre: "Combo Matero El Gringo",
+    nombre: "Combo Matero El Gringo.",
     categoria: "combos",
     precio: 64000,
     destacado: true,
@@ -78,7 +78,7 @@ const PRODUCTOS_INICIALES = [
   },
   {
     id: 5,
-    nombre: "Mate Torpedo Algarrobo",
+    nombre: "Mate Torpedo Algarrobo.",
     categoria: "mates",
     precio: 22000,
     destacado: false,
@@ -88,7 +88,7 @@ const PRODUCTOS_INICIALES = [
   },
   {
     id: 6,
-    nombre: "Matera Canasta simil cuero",
+    nombre: "Matera Canasta simil cuero.",
     categoria: "combos",
     precio: 23500,
     destacado: false,
@@ -98,7 +98,7 @@ const PRODUCTOS_INICIALES = [
   },
   {
     id: 7,
-    nombre: "Bombilla chata acero, grabada",
+    nombre: "Bombilla chata acero, grabada.",
     categoria: "bombillas",
     precio: 4200,
     destacado: false,
@@ -108,7 +108,7 @@ const PRODUCTOS_INICIALES = [
   },
   {
     id: 8,
-    nombre: "Combo Matero La Nona",
+    nombre: "Combo Matero La Nona.",
     categoria: "combos",
     precio: 61000,
     destacado: false,
@@ -118,7 +118,7 @@ const PRODUCTOS_INICIALES = [
   },
   {
     id: 9,
-    nombre: "Mesita matera",
+    nombre: "Mesita matera.",
     categoria: "accesorios",
     precio: 21000,
     destacado: false,
@@ -128,7 +128,7 @@ const PRODUCTOS_INICIALES = [
   },
   {
     id: 10,
-    nombre: "Grabados Personalizados",
+    nombre: "Grabados Personalizados.",
     categoria: "grabados",
     precio: 16000,
     destacado: false,
@@ -138,12 +138,152 @@ const PRODUCTOS_INICIALES = [
   },
   {
     id: 11,
-    nombre: "Luz para bombilla",
+    nombre: "Luz para bombilla.",
     categoria: "accesorios",
     precio: 6100,
     destacado: false,
     descripcion: "Luz para Bombilla.",
     imagen: "/productos/luzBombilla.jpeg",
+    stock: 10
+  },
+  {
+    id: 12,
+    nombre: "Mate Torpedo cuero.",
+    categoria: "mates",
+    precio: 22000,
+    destacado: false,
+    descripcion: "Mate torpedo calabaza forrado en cuero, virola de acero.",
+    imagen: "/productos/torpedocuero.jpeg",
+    stock: 10
+  },
+  {
+    id: 13,
+    nombre: "Mate Criollo Negro.",
+    categoria: "mates",
+    precio: 22000,
+    destacado: false,
+    descripcion: "Mate Calabaza Negro con base de cuero.",
+    imagen: "/productos/matecalabazanegro.jpeg",
+    stock: 10
+  },
+  {
+    id: 14,
+    nombre: "Mate Criollo redondo.",
+    categoria: "mates",
+    precio: 22000,
+    destacado: false,
+    descripcion: "Mate calabaza copa, con base de cuero.",
+    imagen: "/productos/matecalabazacopa.jpeg",
+    stock: 10
+  },
+  {
+    id: 15,
+    nombre: "Mate Criollo.",
+    categoria: "mates",
+    precio: 22000,
+    destacado: false,
+    descripcion: "Mate calabaza liso.",
+    imagen: "/productos/matecalabazablanco.jpeg",
+    stock: 10
+  },
+  {
+    id: 16,
+    nombre: "Mate 3D equipos",
+    categoria: "mates",
+    precio: 22000,
+    destacado: false,
+    descripcion: "Mate equipos de futbol 3D varios colores.",
+    imagen: "/productos/mate3D.jpeg",
+    stock: 10
+  },
+  {
+    id: 17,
+    nombre: "Latas Azucar y Yerba.",
+    categoria: "accesorios",
+    precio: 6100,
+    destacado: false,
+    descripcion: "Latas Azucar y Yerba varios colores.",
+    imagen: "/productos/latasAzucarYerba.jpeg",
+    stock: 10
+  },
+  {
+    id: 18,
+    nombre: "Termo negro 1.2L Acero Inox.",
+    categoria: "termos",
+    precio: 35000,
+    destacado: false,
+    descripcion: "Termo con doble pared de aislamiento al vacío. Mantiene el agua caliente durante más de 24 horas. Pico cebador de precisión.",
+    imagen: "/productos/termonegro.jpeg",
+    stock: 5
+  },
+  {
+    id: 19,
+    nombre: "Termo 1L Acero Inox.",
+    categoria: "termos",
+    precio: 35000,
+    destacado: false,
+    descripcion: "Termo con doble pared de aislamiento al vacío. Mantiene el agua caliente durante más de 24 horas. Pico cebador de precisión.",
+    imagen: "/productos/termoacero.jpeg",
+    stock: 5
+  },
+  {
+    id: 20,
+    nombre: "Termo 1 L Acero Inox Equipos.",
+    categoria: "termos",
+    precio: 35000,
+    destacado: false,
+    descripcion: "Termo con doble pared de aislamiento al vacío. Mantiene el agua caliente durante más de 24 horas. Pico cebador de precisión, Equipos.",
+    imagen: "/productos/termoequipos.jpeg",
+    stock: 5
+  },
+  {
+    id: 21,
+    nombre: "Choops.",
+    categoria: "accesorios",
+    precio: 6100,
+    destacado: false,
+    descripcion: "Choops 750 cm3.",
+    imagen: "/productos/chop.jpeg",
+    stock: 10
+  },
+  {
+    id: 22,
+    nombre: "Vaso Fernetero.",
+    categoria: "accesorios",
+    precio: 6100,
+    destacado: false,
+    descripcion: "Vaso Fernetero Rosa, ideal para grabados personalizados.",
+    imagen: "/productos/vasorosa.jpeg",
+    stock: 10
+  },
+  {
+    id: 23,
+    nombre: "Vaso Fernetero Grabado.",
+    categoria: "accesorios",
+    precio: 6100,
+    destacado: false,
+    descripcion: "Vaso Fernetero Grabado varios equipos.",
+    imagen: "/productos/vasograbado.jpeg",
+    stock: 10
+  },
+  {
+    id: 24,
+    nombre: "Botella Termica.",
+    categoria: "accesorios",
+    precio: 6100,
+    destacado: false,
+    descripcion: "Botella termica.",
+    imagen: "/productos/botella.jpeg",
+    stock: 10
+  },
+  {
+    id: 25,
+    nombre: "Porta Termo.",
+    categoria: "accesorios",
+    precio: 6100,
+    destacado: false,
+    descripcion: "Porta termo simil cuero.",
+    imagen: "/productos/portatermo.jpeg",
     stock: 10
   }
 ];
@@ -318,7 +458,7 @@ export default function App() {
             El Ritual del Buen Mate Empieza Acá
           </h2>
           <p className="text-sm sm:text-lg text-[#D2C3B4] max-w-2xl mx-auto font-light">
-            Mates de calabaza, madera de algarrobo, bombillas de alpaca y los mejores accesorios criollos hechos con pasión por Marcos.
+            Mates de calabaza, madera de algarrobo, bombillas de alpaca y los mejores accesorios criollos hechos con pasión por <strong>Marcos Godoy</strong>.
           </p>
           <div className="pt-4 flex flex-wrap justify-center gap-4">
             <a
@@ -459,7 +599,7 @@ export default function App() {
             Sobre "La Matera del Gringo"
           </h3>
           <p className="text-sm sm:text-base text-[#5C493C] leading-relaxed">
-            Hola, soy **Marcos Godoy**. Este proyecto nació de la pasión por la cultura Matera. Para ofrecerte piezas únicas que te acompañen en cada cebada, ya sea en el trabajo, la facultad o compartiendo con amigos.
+            Hola, soy <strong>Marcos Godoy</strong> Este proyecto nació de la pasión por la cultura Matera. Para ofrecerte piezas únicas que te acompañen en cada cebada, ya sea en el trabajo, la facultad o compartiendo con amigos.
           </p>
         </div>
       </section>
