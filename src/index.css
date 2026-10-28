@@ -1,1 +1,45 @@
 @import "tailwindcss";
+
+/* ========================================================
+   TEXTURAS DE CUERO ARTESANAL (LA MATERA DEL GRINGO)
+   Graneado táctil, costuras criollas y relieve natural
+   ======================================================== */
+
+/* Cuero Marrón Principal Texturado (#5A3825 base) */
+.bg-leather-textured {
+  background-color: #5A3825;
+  background-image:
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05) 0%, transparent 60%),
+    radial-gradient(circle at 2px 2px, rgba(0, 0, 0, 0.28) 1.2px, transparent 1.6px),
+    radial-gradient(circle at 6px 6px, rgba(255, 255, 255, 0.09) 1px, transparent 1.5px),
+    linear-gradient(135deg, rgba(115, 75, 52, 0.35) 0%, rgba(68, 42, 28, 0.55) 100%);
+  background-size: 100% 100%, 8px 8px, 8px 8px, 100% 100%;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.12), inset 0 -2px 4px rgba(0, 0, 0, 0.25);
+}
+
+/* Cuero Oscuro Texturado para Hero y Footer (#452C1E base) */
+.bg-leather-dark-textured {
+  background-color: #452C1E;
+  background-image:
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.03) 0%, transparent 60%),
+    radial-gradient(circle at 2px 2px, rgba(0, 0, 0, 0.35) 1.2px, transparent 1.6px),
+    radial-gradient(circle at 6px 6px, rgba(255, 255, 255, 0.06) 1px, transparent 1.5px),
+    linear-gradient(135deg, rgba(90, 58, 40, 0.3) 0%, rgba(45, 28, 18, 0.65) 100%);
+  background-size: 100% 100%, 8px 8px, 8px 8px, 100% 100%;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.08), inset 0 -2px 5px rgba(0, 0, 0, 0.35);
+}
+
+/* Cuero Cálido Texturado para Botones y Acentos (#6E4933 base) */
+.bg-leather-warm-textured {
+  background-color: #6E4933;
+  background-image:
+    radial-gradient(circle at 2px 2px, rgba(0, 0, 0, 0.22) 1.2px, transparent 1.6px),
+    radial-gradient(circle at 6px 6px, rgba(255, 255, 255, 0.1) 1px, transparent 1.5px),
+    linear-gradient(135deg, rgba(135, 92, 66, 0.35) 0%, rgba(85, 54, 36, 0.45) 100%);
+  background-size: 8px 8px, 8px 8px, 100% 100%;
+}
+
+/* Costura Criolla Artesanal (Borde decorativo de puntada) */
+.leather-stitch {
+  border: 1px dashed rgba(212, 175, 55, 0.45);
+}
