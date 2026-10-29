@@ -1,5 +1,16 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Transición suave para cambio de tema */
+html {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
 /* ========================================================
    TEXTURAS DE CUERO ARTESANAL (LA MATERA DEL GRINGO)
    Graneado táctil, costuras criollas y relieve natural

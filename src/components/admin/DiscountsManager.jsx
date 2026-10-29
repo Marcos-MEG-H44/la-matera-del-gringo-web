@@ -7,6 +7,7 @@ import {
   Trash2,
   Power
 } from "lucide-react";
+import { sanitizeText } from "../../lib/sanitize";
 
 export default function DiscountsManager() {
   const {
@@ -76,7 +77,7 @@ export default function DiscountsManager() {
     }
 
     await addPromotion({
-      titulo: titulo.trim(),
+      titulo: sanitizeText(titulo),
       producto_id: tipoDestino === "producto" ? Number(productoId) : null,
       categoria: tipoDestino === "categoria" ? categoria : null,
       porcentaje_descuento: Number(porcentaje),

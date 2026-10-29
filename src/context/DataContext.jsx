@@ -4,9 +4,16 @@ import { supabase, isSupabaseConfigured } from "../lib/supabase";
 const DataContext = createContext(null);
 
 const STORAGE_KEYS = {
-  PRODUCTS: "matera_productos_v1",
-  CATEGORIES: "matera_categorias_v1",
-  PROMOTIONS: "matera_promociones_v1"
+  PRODUCTS: "matera_productos_v2",
+  CATEGORIES: "matera_categorias_v2",
+  PROMOTIONS: "matera_promociones_v2"
+};
+
+// Filtro estricto para asegurar que ningún producto o categoría contenga o muestre 'compañero/s'
+export const noEsCompanero = (item) => {
+  if (!item) return false;
+  const texto = `${item.nombre || ""} ${item.descripcion || ""} ${item.categoria || ""} ${item.label || ""} ${item.id || ""}`;
+  return !/compa[ñn]er/i.test(texto);
 };
 
 // Catálogo inicial con los 25 productos existentes
@@ -350,35 +357,47 @@ export const PROMOCIONES_INICIALES = [
 ];
 
 export const DataProvider = ({ children }) => {
-  // 1. Estado de Productos (Normalizando soporte multi-imagen)
+  // 1. Estado de Productos (Normalizando soporte multi-imagen y excluyendo cualquier 'compañero/s')
   const [productos, setProductos] = useState(() => {
     try {
+      // Limpiar datos obsoletos de v1 si existían en el navegador
+      if (typeof window !== "undefined" && window.localStorage) {
+        localStorage.removeItem("matera_productos_v1");
+        localStorage.removeItem("matera_categorias_v1");
+      }
       const guardados = localStorage.getItem(STORAGE_KEYS.PRODUCTS);
       if (guardados) {
         const parsed = JSON.parse(guardados);
-        return parsed.map((p) => ({
-          ...p,
-          imagenes: Array.isArray(p.imagenes) && p.imagenes.length > 0 ? p.imagenes : (p.imagen ? [p.imagen] : [])
-        }));
+        return parsed
+          .filter(noEsCompanero)
+          .map((p) => ({
+            ...p,
+            imagenes: Array.isArray(p.imagenes) && p.imagenes.length > 0 ? p.imagenes : (p.imagen ? [p.imagen] : [])
+          }));
       }
     } catch (e) {
       console.error("Error leyendo productos:", e);
     }
-    return PRODUCTOS_INICIALES.map((p) => ({
-      ...p,
-      imagenes: [p.imagen]
-    }));
+    return PRODUCTOS_INICIALES
+      .filter(noEsCompanero)
+      .map((p) => ({
+        ...p,
+        imagenes: [p.imagen]
+      }));
   });
 
-  // 2. Estado de Categorías
+  // 2. Estado de Categorías (Excluyendo 'compañero/s')
   const [categorias, setCategorias] = useState(() => {
     try {
       const guardadas = localStorage.getItem(STORAGE_KEYS.CATEGORIES);
-      if (guardadas) return JSON.parse(guardadas);
+      if (guardadas) {
+        const parsed = JSON.parse(guardadas);
+        return parsed.filter(noEsCompanero);
+      }
     } catch (e) {
       console.error("Error leyendo categorías:", e);
     }
-    return CATEGORIAS_INICIALES;
+    return CATEGORIAS_INICIALES.filter(noEsCompanero);
   });
 
   // 3. Estado de Promociones
@@ -392,13 +411,15 @@ export const DataProvider = ({ children }) => {
     return PROMOCIONES_INICIALES;
   });
 
-  // Guardar en localStorage ante cambios
+  // Guardar en localStorage ante cambios (siempre filtrado)
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(productos));
+    const limpios = productos.filter(noEsCompanero);
+    localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(limpios));
   }, [productos]);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(categorias));
+    const limpios = categorias.filter(noEsCompanero);
+    localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(limpios));
   }, [categorias]);
 
   useEffect(() => {
@@ -413,12 +434,12 @@ export const DataProvider = ({ children }) => {
       try {
         const { data: prods } = await supabase.from("productos").select("*");
         if (prods && prods.length > 0) {
-          setProductos(prods);
+          setProductos(prods.filter(noEsCompanero));
         }
 
         const { data: cats } = await supabase.from("categorias").select("*");
         if (cats && cats.length > 0) {
-          setCategorias(cats.map(c => ({ id: c.id, label: c.nombre })));
+          setCategorias(cats.map(c => ({ id: c.id, label: c.nombre })).filter(noEsCompanero));
         }
 
         const { data: promos } = await supabase.from("promociones").select("*");

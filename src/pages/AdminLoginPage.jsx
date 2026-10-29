@@ -3,6 +3,7 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { isSupabaseConfigured } from "../lib/supabase";
 import { Lock, Mail, Eye, EyeOff, ShieldCheck, ArrowLeft, KeyRound, AlertCircle } from "lucide-react";
+import ThemeToggle from "../components/ThemeToggle";
 
 export default function AdminLoginPage() {
   const { login, isAdmin, defaultCredentials } = useAuth();
@@ -45,20 +46,21 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] flex flex-col justify-center items-center p-4 selection:bg-[#D4AF37]/30 selection:text-[#5A3825]">
-      {/* Botón Volver a la Tienda */}
-      <div className="w-full max-w-md mb-6">
+    <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#120D0A] flex flex-col justify-center items-center p-4 selection:bg-[#D4AF37]/30 selection:text-[#5A3825] transition-colors duration-200">
+      {/* Botón Volver a la Tienda y ThemeToggle */}
+      <div className="w-full max-w-md mb-6 flex items-center justify-between">
         <Link
           to="/"
-          className="inline-flex items-center text-sm font-medium text-[#7A6859] hover:text-[#5A3825] transition-colors"
+          className="inline-flex items-center text-sm font-medium text-[#7A6859] dark:text-[#C5B4A2] hover:text-[#5A3825] dark:hover:text-[#D4AF37] transition-colors"
         >
           <ArrowLeft className="w-4 h-4 mr-1.5" />
           Volver a la Tienda Pública
         </Link>
+        <ThemeToggle compact={true} />
       </div>
 
       {/* Tarjeta de Login */}
-      <div className="w-full max-w-md bg-white rounded-3xl shadow-xl border border-[#E8DFD3] overflow-hidden">
+      <div className="w-full max-w-md bg-white dark:bg-[#1B130E] rounded-3xl shadow-xl border border-[#E8DFD3] dark:border-[#38251B] overflow-hidden">
         {/* Cabecera con colores de marca */}
         <div className="bg-[#5A3825] p-8 text-center relative border-b border-[#7A523A]">
           <div className="inline-block p-1 bg-[#D4AF37] rounded-full shadow-lg mb-3">
@@ -87,7 +89,7 @@ export default function AdminLoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-[#6B5344] uppercase tracking-wider mb-2">
+              <label className="block text-xs font-bold text-[#6B5344] dark:text-[#D4AF37] uppercase tracking-wider mb-2">
                 Correo Electrónico
               </label>
               <div className="relative">
@@ -97,14 +99,14 @@ export default function AdminLoginPage() {
                   placeholder="admin@lamateradelgringo.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-[#D8CCBC] bg-[#FDFBF7] text-[#382A24] text-sm focus:outline-none focus:border-[#5A3825] focus:ring-1 focus:ring-[#5A3825] transition-all"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-[#D8CCBC] dark:border-[#42291B] bg-[#FDFBF7] dark:bg-[#251A13] text-[#382A24] dark:text-[#F3EAD8] text-sm focus:outline-none focus:border-[#5A3825] dark:focus:border-[#D4AF37] focus:ring-1 focus:ring-[#5A3825] transition-all"
                 />
-                <Mail className="w-4 h-4 text-[#8C7A6B] absolute left-3.5 top-3.5" />
+                <Mail className="w-4 h-4 text-[#8C7A6B] dark:text-[#9F8C7D] absolute left-3.5 top-3.5" />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-[#6B5344] uppercase tracking-wider mb-2">
+              <label className="block text-xs font-bold text-[#6B5344] dark:text-[#D4AF37] uppercase tracking-wider mb-2">
                 Contraseña
               </label>
               <div className="relative">
@@ -114,13 +116,14 @@ export default function AdminLoginPage() {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-10 py-3 rounded-xl border border-[#D8CCBC] bg-[#FDFBF7] text-[#382A24] text-sm focus:outline-none focus:border-[#5A3825] focus:ring-1 focus:ring-[#5A3825] transition-all"
+                  className="w-full pl-10 pr-10 py-3 rounded-xl border border-[#D8CCBC] dark:border-[#42291B] bg-[#FDFBF7] dark:bg-[#251A13] text-[#382A24] dark:text-[#F3EAD8] text-sm focus:outline-none focus:border-[#5A3825] dark:focus:border-[#D4AF37] focus:ring-1 focus:ring-[#5A3825] transition-all"
                 />
-                <Lock className="w-4 h-4 text-[#8C7A6B] absolute left-3.5 top-3.5" />
+                <Lock className="w-4 h-4 text-[#8C7A6B] dark:text-[#9F8C7D] absolute left-3.5 top-3.5" />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-3.5 text-[#8C7A6B] hover:text-[#5A3825]"
+                  aria-label={showPassword ? "Ocultar contraseña" : "Ver contraseña"}
+                  className="absolute right-3.5 top-3.5 text-[#8C7A6B] dark:text-[#9F8C7D] hover:text-[#5A3825] dark:hover:text-[#D4AF37]"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -138,23 +141,23 @@ export default function AdminLoginPage() {
           </form>
 
           {/* Acceso Rápido / Credenciales de Demostración */}
-          <div className="pt-4 border-t border-[#F0E8DD] space-y-3">
+          <div className="pt-4 border-t border-[#F0E8DD] dark:border-[#38251B] space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-[#8C7A6B]">Acceso de prueba rápido:</span>
+              <span className="text-xs text-[#8C7A6B] dark:text-[#9F8C7D]">Acceso de prueba rápido:</span>
               <button
                 type="button"
                 onClick={handleUseDemo}
-                className="text-xs font-bold text-[#5A3825] hover:text-[#D4AF37] flex items-center space-x-1 cursor-pointer"
+                className="text-xs font-bold text-[#5A3825] dark:text-[#D4AF37] hover:underline flex items-center space-x-1 cursor-pointer"
               >
                 <KeyRound className="w-3.5 h-3.5" />
                 <span>Autocompletar credenciales</span>
               </button>
             </div>
 
-            <div className="p-3 bg-[#F5F0E8] rounded-xl text-[11px] text-[#6E5C4F] space-y-1">
+            <div className="p-3 bg-[#F5F0E8] dark:bg-[#251A13] border border-[#E8DFD3]/60 dark:border-[#38251B] rounded-xl text-[11px] text-[#6E5C4F] dark:text-[#C5B4A2] space-y-1">
               <div><strong>Email:</strong> admin@lamateradelgringo.com</div>
               <div><strong>Contraseña:</strong> admin</div>
-              <div className="text-[10px] text-[#8C7A6B] pt-1 border-t border-[#E8DFD3]/60">
+              <div className="text-[10px] text-[#8C7A6B] dark:text-[#9F8C7D] pt-1 border-t border-[#E8DFD3]/60 dark:border-[#38251B]">
                 Estado del Backend: {isSupabaseConfigured ? "🟢 Conectado a Supabase" : "🟡 Almacenamiento Local (Listo para migrar)"}
               </div>
             </div>

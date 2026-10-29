@@ -1,0 +1,9 @@
+# robots.txt para La Matera del Gringo
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /admin/*
+
+# Sitemap oficial
+Sitemap: https://la-matera-del-gringo-web.vercel.app/sitemap.xml

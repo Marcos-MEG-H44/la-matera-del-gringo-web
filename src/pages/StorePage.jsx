@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useData } from "../context/DataContext";
 import { useAuth } from "../context/AuthContext";
@@ -21,6 +21,8 @@ import {
   ChevronRight,
   Images
 } from "lucide-react";
+import ThemeToggle from "../components/ThemeToggle";
+import LiveChatWidget from "../components/LiveChatWidget";
 
 // Componente para el ícono de Instagram (SVG propio para evitar errores de librería)
 const InstagramIcon = ({ className = "w-5 h-5" }) => (
@@ -52,11 +54,27 @@ export default function StorePage() {
   const [favoritos, setFavoritos] = useState([]);
   const [menuMovilAbierto, setMenuMovilAbierto] = useState(false);
 
+  // Accesibilidad: Cerrar modal y carrito con tecla Escape
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        if (productoModal) setProductoModal(null);
+        if (carritoAbierto) setCarritoAbierto(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [productoModal, carritoAbierto]);
+
   // Filtrado de productos por búsqueda, categoría y estado activo
   const productosFiltrados = useMemo(() => {
     return productos.filter((prod) => {
       // Si el producto está inactivo en el admin, no se muestra en la tienda pública
       if (prod.activo === false) return false;
+
+      // Exclusión garantizada: no mostrar productos denominados o descritos como compañeros
+      const texto = `${prod.nombre || ""} ${prod.descripcion || ""} ${prod.categoria || ""}`;
+      if (/compa[ñn]er/i.test(texto)) return false;
 
       const coincideCat = categoriaSel === "todos" || prod.categoria === categoriaSel;
       const coincideBusqueda =
@@ -171,10 +189,10 @@ export default function StorePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] text-[#382A24] font-sans selection:bg-[#D4AF37]/30 selection:text-[#5A3825]">
+    <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#120D0A] text-[#382A24] dark:text-[#EFE5D8] font-sans selection:bg-[#D4AF37]/30 selection:text-[#5A3825] transition-colors duration-200">
       {/* BARRA SUPERIOR ADMIN DISCRETA (Si ya inició sesión) */}
       {isAdmin && (
-        <div className="bg-[#452C1E] text-[#D4AF37] px-4 py-1.5 text-xs flex justify-between items-center border-b border-[#5A3825]">
+        <div className="bg-[#452C1E] dark:bg-[#1A100A] text-[#D4AF37] px-4 py-1.5 text-xs flex justify-between items-center border-b border-[#5A3825] dark:border-[#332014]">
           <span className="flex items-center space-x-1 font-semibold">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
             <span>Modo Administrador Activo</span>
@@ -189,7 +207,7 @@ export default function StorePage() {
       )}
 
       {/* NAVEGACIÓN SUPERIOR (Marrón más claro #5A3825) */}
-      <header className="sticky top-0 z-40 bg-[#5A3825] text-[#F3EAD8] shadow-md border-b border-[#7A523A]">
+      <header className="sticky top-0 z-40 bg-[#5A3825] dark:bg-[#1A110B] text-[#F3EAD8] shadow-md border-b border-[#7A523A] dark:border-[#332014]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           {/* Logo y Marca */}
           <div
@@ -201,8 +219,10 @@ export default function StorePage() {
           >
             <img
               src="/logo1.jpeg"
-              alt="Logo La Matera del Gringo"
+              alt="Logo oficial La Matera del Gringo"
               className="w-12 h-12 object-contain rounded-full border border-[#D4AF37]"
+              width="48"
+              height="48"
             />
             <div>
               <h1 className="text-xl sm:text-2xl font-serif font-bold tracking-wide text-[#F3EAD8]">
@@ -221,12 +241,14 @@ export default function StorePage() {
               placeholder="Buscar mate, bombilla, termo..."
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
-              className="w-full bg-[#452C1E] text-[#F3EAD8] placeholder-[#B59C8B] pl-10 pr-4 py-2 rounded-full border border-[#7A523A] focus:outline-none focus:border-[#D4AF37] text-sm"
+              aria-label="Buscar productos en el catálogo"
+              className="w-full bg-[#452C1E] dark:bg-[#271810] text-[#F3EAD8] placeholder-[#B59C8B] dark:placeholder-[#8C7667] pl-10 pr-4 py-2 rounded-full border border-[#7A523A] dark:border-[#42291B] focus:outline-none focus:border-[#D4AF37] text-sm transition-colors"
             />
             <Search className="w-4 h-4 text-[#B59C8B] absolute left-3.5 top-3" />
             {busqueda && (
               <button
                 onClick={() => setBusqueda("")}
+                aria-label="Limpiar búsqueda"
                 className="absolute right-3 top-2.5 text-[#B59C8B] hover:text-[#F3EAD8] cursor-pointer"
               >
                 <X className="w-4 h-4" />
@@ -235,10 +257,15 @@ export default function StorePage() {
           </div>
 
           {/* Acciones */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-3">
+            {/* Selector de Modo Claro / Modo Oscuro */}
+            <ThemeToggle />
+
+            {/* Botón Carrito */}
             <button
               onClick={() => setCarritoAbierto(true)}
-              className="relative p-2.5 bg-[#6E4933] hover:bg-[#7D553D] rounded-full transition-colors border border-[#8C6045] cursor-pointer"
+              aria-label={`Ver carrito de compras con ${totalItems} productos`}
+              className="relative p-2.5 bg-[#6E4933] dark:bg-[#2F1F17] hover:bg-[#7D553D] dark:hover:bg-[#3D291F] rounded-full transition-colors border border-[#8C6045] dark:border-[#4E3426] cursor-pointer"
               title="Ver Carrito"
             >
               <ShoppingBag className="w-5 h-5 text-[#D4AF37]" />
@@ -251,7 +278,8 @@ export default function StorePage() {
 
             <button
               onClick={() => setMenuMovilAbierto(!menuMovilAbierto)}
-              className="md:hidden p-2 rounded-lg bg-[#6E4933] text-[#F3EAD8] cursor-pointer"
+              aria-label="Abrir menú de búsqueda"
+              className="md:hidden p-2 rounded-lg bg-[#6E4933] dark:bg-[#2F1F17] text-[#F3EAD8] cursor-pointer"
             >
               <Menu className="w-6 h-6" />
             </button>
@@ -266,7 +294,8 @@ export default function StorePage() {
               placeholder="Buscar productos..."
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
-              className="w-full bg-[#452C1E] text-[#F3EAD8] placeholder-[#B59C8B] pl-10 pr-4 py-2 rounded-full border border-[#7A523A] text-sm"
+              aria-label="Buscar productos en el catálogo (móvil)"
+              className="w-full bg-[#452C1E] dark:bg-[#271810] text-[#F3EAD8] placeholder-[#B59C8B] dark:placeholder-[#8C7667] pl-10 pr-4 py-2 rounded-full border border-[#7A523A] dark:border-[#42291B] text-sm"
             />
             <Search className="w-4 h-4 text-[#B59C8B] absolute left-3.5 top-3" />
           </div>
@@ -289,7 +318,7 @@ export default function StorePage() {
             El Ritual del Buen Mate Empieza Acá
           </h2>
           <p className="text-sm sm:text-lg text-[#E0D0C1] max-w-2xl mx-auto font-light">
-            Mates de calabaza, madera de algarrobo, bombillas de alpaca y los mejores accesorios criollos hechos con pasión por <strong>Marcos Godoy</strong>.
+            Mates de calabaza, madera de algarrobo, bombillas de alpaca y los mejores accesorios criollos hechos con pasión por <strong>La Matera del Gringo</strong>.
           </p>
           <div className="pt-4 flex flex-wrap justify-center gap-4">
             <a
@@ -314,26 +343,30 @@ export default function StorePage() {
       {/* SECCIÓN CATÁLOGO */}
       <main id="catalogo" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Filtros por Categoría */}
-        <div className="flex items-center justify-between border-b border-[#E6DCCF] pb-4 mb-8 overflow-x-auto">
+        <div className="flex items-center justify-between border-b border-[#E6DCCF] dark:border-[#332014] pb-4 mb-8 overflow-x-auto">
           <div className="flex space-x-2 sm:space-x-4">
             <button
               onClick={() => setCategoriaSel("todos")}
+              aria-label="Filtrar por todos los productos"
               className={`px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap cursor-pointer ${
                 categoriaSel === "todos"
-                  ? "bg-[#5A3825] text-[#D4AF37] shadow font-bold"
-                  : "bg-[#EFE9DF] text-[#6B5344] hover:bg-[#E2D8C9]"
+                  ? "bg-[#5A3825] dark:bg-[#D4AF37] text-[#D4AF37] dark:text-[#382315] shadow font-bold"
+                  : "bg-[#EFE9DF] dark:bg-[#251A13] text-[#6B5344] dark:text-[#D4C3B2] hover:bg-[#E2D8C9] dark:hover:bg-[#34241B]"
               }`}
             >
               Todos los Productos
             </button>
-            {categorias.map((cat) => (
+            {categorias
+              .filter((c) => !/compa[ñn]er/i.test(c.id) && !/compa[ñn]er/i.test(c.label))
+              .map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => setCategoriaSel(cat.id)}
+                aria-label={`Filtrar por categoría ${cat.label}`}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap cursor-pointer ${
                   categoriaSel === cat.id
-                    ? "bg-[#5A3825] text-[#D4AF37] shadow font-bold"
-                    : "bg-[#EFE9DF] text-[#6B5344] hover:bg-[#E2D8C9]"
+                    ? "bg-[#5A3825] dark:bg-[#D4AF37] text-[#D4AF37] dark:text-[#382315] shadow font-bold"
+                    : "bg-[#EFE9DF] dark:bg-[#251A13] text-[#6B5344] dark:text-[#D4C3B2] hover:bg-[#E2D8C9] dark:hover:bg-[#34241B]"
                 }`}
               >
                 {cat.label}
@@ -344,10 +377,10 @@ export default function StorePage() {
 
         {/* Grilla de Productos */}
         {productosFiltrados.length === 0 ? (
-          <div className="text-center py-16 bg-[#F5F0E8] rounded-2xl border border-dashed border-[#C8BBAA]">
-            <Coffee className="w-12 h-12 text-[#8C7A6B] mx-auto mb-3" />
-            <h3 className="text-lg font-bold text-[#5A3825]">No encontramos productos</h3>
-            <p className="text-sm text-[#7A6859]">
+          <div className="text-center py-16 bg-[#F5F0E8] dark:bg-[#1C1410] rounded-2xl border border-dashed border-[#C8BBAA] dark:border-[#3D2B20]">
+            <Coffee className="w-12 h-12 text-[#8C7A6B] dark:text-[#B59C8B] mx-auto mb-3" />
+            <h3 className="text-lg font-bold text-[#5A3825] dark:text-[#D4AF37]">No encontramos productos</h3>
+            <p className="text-sm text-[#7A6859] dark:text-[#9C8A79]">
               Prueba buscando otro término o cambiando de categoría.
             </p>
           </div>
@@ -361,16 +394,17 @@ export default function StorePage() {
               return (
                 <div
                   key={prod.id}
-                  className="bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-md transition-shadow border border-[#E8DFD3] flex flex-col group"
+                  className="bg-white dark:bg-[#1B130E] rounded-2xl overflow-hidden shadow-xs hover:shadow-lg transition-all border border-[#E8DFD3] dark:border-[#38251B] flex flex-col group"
                 >
-                  {/* IMAGEN DEL PRODUCTO (Centrada y Completa con object-contain) */}
+                  {/* IMAGEN DEL PRODUCTO (Centrada y Completa con object-contain + Lazy Loading) */}
                   <div
                     onClick={() => handleOpenModal(prod)}
-                    className="relative aspect-square overflow-hidden bg-[#F8F5F0] flex items-center justify-center p-3 cursor-pointer"
+                    className="relative aspect-square overflow-hidden bg-[#F8F5F0] dark:bg-[#221812] flex items-center justify-center p-3 cursor-pointer"
                   >
                     <img
                       src={prod.imagen}
-                      alt={prod.nombre}
+                      alt={`Foto de ${prod.nombre} - ${prod.categoria}`}
+                      loading="lazy"
                       className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-500"
                     />
 
@@ -402,8 +436,9 @@ export default function StorePage() {
                         e.stopPropagation();
                         toggleFavorito(prod.id);
                       }}
-                      className="absolute top-3 right-3 p-2 bg-white/85 backdrop-blur-sm rounded-full text-[#5A3825] hover:text-red-600 transition-colors shadow cursor-pointer"
-                      title="Agregar a favoritos"
+                      aria-label={favoritos.includes(prod.id) ? "Quitar de favoritos" : "Agregar a favoritos"}
+                      className="absolute top-3 right-3 p-2 bg-white/85 dark:bg-[#1B130E]/85 backdrop-blur-sm rounded-full text-[#5A3825] dark:text-[#D4AF37] hover:text-red-600 transition-colors shadow cursor-pointer"
+                      title="Favorito"
                     >
                       <Heart
                         className={`w-4 h-4 ${
@@ -416,35 +451,35 @@ export default function StorePage() {
                   {/* Info del producto */}
                   <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
                     <div>
-                      <span className="text-xs font-bold text-[#9E816B] uppercase tracking-wider">
+                      <span className="text-xs font-bold text-[#9E816B] dark:text-[#D4AF37] uppercase tracking-wider">
                         {prod.categoria}
                       </span>
                       <h3
                         onClick={() => handleOpenModal(prod)}
-                        className="text-lg font-serif font-bold text-[#382A24] hover:text-[#8F5D38] cursor-pointer transition-colors mt-1"
+                        className="text-lg font-serif font-bold text-[#382A24] dark:text-[#F3EAD8] hover:text-[#8F5D38] dark:hover:text-[#D4AF37] cursor-pointer transition-colors mt-1"
                       >
                         {prod.nombre}
                       </h3>
-                      <p className="text-xs text-[#6B5344] line-clamp-2 mt-1">
+                      <p className="text-xs text-[#6B5344] dark:text-[#B8A795] line-clamp-2 mt-1">
                         {prod.descripcion}
                       </p>
                     </div>
 
-                    <div className="pt-2 border-t border-[#F0E8DD] flex items-center justify-between">
+                    <div className="pt-2 border-t border-[#F0E8DD] dark:border-[#301F16] flex items-center justify-between">
                       <div>
                         {hasDiscount ? (
                           <div>
-                            <span className="text-[11px] text-[#8C7A6B] line-through block">
+                            <span className="text-[11px] text-[#8C7A6B] dark:text-[#9A897B] line-through block">
                               ${prod.precio.toLocaleString("es-AR")}
                             </span>
-                            <span className="text-xl font-bold text-emerald-800">
+                            <span className="text-xl font-bold text-emerald-800 dark:text-emerald-400">
                               ${discountInfo.finalPrice.toLocaleString("es-AR")}
                             </span>
                           </div>
                         ) : (
                           <div>
-                            <span className="text-xs text-[#8C7A6B] block">Precio</span>
-                            <span className="text-xl font-bold text-[#5A3825]">
+                            <span className="text-xs text-[#8C7A6B] dark:text-[#9A897B] block">Precio</span>
+                            <span className="text-xl font-bold text-[#5A3825] dark:text-[#E8BD65]">
                               ${prod.precio.toLocaleString("es-AR")}
                             </span>
                           </div>
@@ -454,13 +489,15 @@ export default function StorePage() {
                       <div className="flex space-x-2">
                         <button
                           onClick={() => handleOpenModal(prod)}
-                          className="p-2.5 text-[#6B5344] hover:bg-[#F2EBDC] rounded-lg border border-[#D8CCBC] transition-colors cursor-pointer"
+                          aria-label={`Ver detalles de ${prod.nombre}`}
+                          className="p-2.5 text-[#6B5344] dark:text-[#D4C3B2] hover:bg-[#F2EBDC] dark:hover:bg-[#2A1D16] rounded-lg border border-[#D8CCBC] dark:border-[#3D281D] transition-colors cursor-pointer"
                           title="Ver detalle"
                         >
                           <Info className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => agregarAlCarrito(prod)}
+                          aria-label={`Agregar ${prod.nombre} al carrito`}
                           className="px-3.5 py-2.5 bg-[#5A3825] hover:bg-[#6E4933] text-[#D4AF37] font-bold rounded-lg text-xs flex items-center space-x-1.5 transition-colors shadow cursor-pointer"
                         >
                           <ShoppingBag className="w-4 h-4" />
@@ -477,12 +514,12 @@ export default function StorePage() {
       </main>
 
       {/* SECCIÓN SOBRE EL EMPRENDIMIENTO */}
-      <section className="bg-[#EFE9DF] border-t border-b border-[#D8CCBC] py-16 px-4 sm:px-6 lg:px-8">
+      <section className="bg-[#EFE9DF] dark:bg-[#1A120D] border-t border-b border-[#D8CCBC] dark:border-[#301F16] py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center space-y-4">
-          <h3 className="text-2xl sm:text-3xl font-serif font-bold text-[#5A3825]">
+          <h3 className="text-2xl sm:text-3xl font-serif font-bold text-[#5A3825] dark:text-[#D4AF37]">
             Sobre "La Matera del Gringo"
           </h3>
-          <p className="text-sm sm:text-base text-[#6B5344] leading-relaxed">
+          <p className="text-sm sm:text-base text-[#6B5344] dark:text-[#C5B4A2] leading-relaxed">
             Hola, soy <strong>Marcos Godoy</strong>. Este proyecto nació de la pasión por la cultura
             Matera. Para ofrecerte piezas únicas que te acompañen en cada cebada, ya sea en el
             trabajo, la facultad o compartiendo con amigos.
@@ -491,11 +528,11 @@ export default function StorePage() {
       </section>
 
       {/* PIE DE PÁGINA (Marrón más cálido y accesible) */}
-      <footer className="bg-[#452C1E] text-[#E0D0C1] py-12 px-4 sm:px-6 lg:px-8 border-t border-[#5A3825]">
+      <footer className="bg-[#452C1E] dark:bg-[#0E0907] text-[#E0D0C1] dark:text-[#C5B4A2] py-12 px-4 sm:px-6 lg:px-8 border-t border-[#5A3825] dark:border-[#261710]">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-sm">
           <div>
             <h4 className="text-lg font-serif font-bold text-[#F3EAD8] mb-3">La Matera del Gringo</h4>
-            <p className="text-xs text-[#B59C8B] leading-relaxed">
+            <p className="text-xs text-[#B59C8B] dark:text-[#9F8C7D] leading-relaxed">
               Venta de mates, bombillas, termos y accesorios materos de primera calidad.
             </p>
           </div>
@@ -524,14 +561,14 @@ export default function StorePage() {
             <h4 className="text-sm font-bold text-[#F3EAD8] uppercase tracking-wider mb-3">
               Horarios de Atención
             </h4>
-            <p className="text-xs text-[#B59C8B]">Lunes a Sábados de 09:00 a 19:00 hs.</p>
-            <p className="text-xs text-[#B59C8B] mt-1">Envíos a todo el país.</p>
+            <p className="text-xs text-[#B59C8B] dark:text-[#9F8C7D]">Lunes a Sábados de 09:00 a 19:00 hs.</p>
+            <p className="text-xs text-[#B59C8B] dark:text-[#9F8C7D] mt-1">Envíos a todo el país.</p>
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto mt-8 pt-6 border-t border-[#5A3825] flex flex-col sm:flex-row items-center justify-between text-xs text-[#9E816B] gap-4">
+        <div className="max-w-7xl mx-auto mt-8 pt-6 border-t border-[#5A3825] dark:border-[#261710] flex flex-col sm:flex-row items-center justify-between text-xs text-[#9E816B] dark:text-[#826E5C] gap-4">
           <div>
-            © {new Date().getFullYear()} La Matera del Gringo. Desarrollado por Marcos.
+            © {new Date().getFullYear()} La Matera del Gringo.
           </div>
           <div>
             <Link
@@ -547,10 +584,15 @@ export default function StorePage() {
 
       {/* MODAL DETALLE PRODUCTO CON VISOR DE MÚLTIPLES FOTOS CENTRADAS Y COMPLETAS */}
       {productoModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-[#D8CCBC]">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modal-product-title"
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200"
+        >
+          <div className="bg-white dark:bg-[#1B130E] rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-[#D8CCBC] dark:border-[#38251B]">
             {/* VISOR DE FOTO: Centrado y Completo (object-contain) */}
-            <div className="relative h-72 sm:h-84 bg-[#F5F0E8] flex items-center justify-center p-4 overflow-hidden border-b border-[#E8DFD3]">
+            <div className="relative h-72 sm:h-84 bg-[#F5F0E8] dark:bg-[#221812] flex items-center justify-center p-4 overflow-hidden border-b border-[#E8DFD3] dark:border-[#301F16]">
               <img
                 src={imagenesDelModal[modalImgIndex] || productoModal.imagen}
                 alt={productoModal.nombre}
@@ -560,7 +602,8 @@ export default function StorePage() {
               {/* Botón Cerrar */}
               <button
                 onClick={() => setProductoModal(null)}
-                className="absolute top-3 right-3 p-2 bg-black/50 text-white rounded-full hover:bg-black/70 cursor-pointer z-10"
+                aria-label="Cerrar ventana de detalle de producto"
+                className="absolute top-3 right-3 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full cursor-pointer z-10 transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -570,14 +613,16 @@ export default function StorePage() {
                 <>
                   <button
                     onClick={handlePrevImg}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/90 hover:bg-white text-[#5A3825] shadow-md transition-all cursor-pointer"
+                    aria-label="Ver foto anterior"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/90 dark:bg-[#1B130E]/90 hover:bg-white dark:hover:bg-[#1B130E] text-[#5A3825] dark:text-[#D4AF37] shadow-md transition-all cursor-pointer"
                     title="Foto anterior"
                   >
                     <ChevronLeft className="w-5 h-5" />
                   </button>
                   <button
                     onClick={handleNextImg}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/90 hover:bg-white text-[#5A3825] shadow-md transition-all cursor-pointer"
+                    aria-label="Ver foto siguiente"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/90 dark:bg-[#1B130E]/90 hover:bg-white dark:hover:bg-[#1B130E] text-[#5A3825] dark:text-[#D4AF37] shadow-md transition-all cursor-pointer"
                     title="Foto siguiente"
                   >
                     <ChevronRight className="w-5 h-5" />
@@ -592,15 +637,16 @@ export default function StorePage() {
 
             {/* Tira de Miniaturas (si tiene más de 1 foto) */}
             {imagenesDelModal.length > 1 && (
-              <div className="flex gap-2 p-3 bg-[#FDFBF7] border-b border-[#E8DFD3] overflow-x-auto">
+              <div className="flex gap-2 p-3 bg-[#FDFBF7] dark:bg-[#140E0A] border-b border-[#E8DFD3] dark:border-[#301F16] overflow-x-auto">
                 {imagenesDelModal.map((imgUrl, idx) => (
                   <button
                     key={idx}
                     onClick={() => setModalImgIndex(idx)}
-                    className={`w-14 h-14 rounded-xl overflow-hidden border-2 flex items-center justify-center p-1 bg-white shrink-0 cursor-pointer transition-all ${
+                    aria-label={`Ver foto ${idx + 1}`}
+                    className={`w-14 h-14 rounded-xl overflow-hidden border-2 flex items-center justify-center p-1 bg-white dark:bg-[#221812] shrink-0 cursor-pointer transition-all ${
                       modalImgIndex === idx
                         ? "border-[#D4AF37] ring-2 ring-[#D4AF37]/50 shadow-sm"
-                        : "border-[#E8DFD3] opacity-65 hover:opacity-100"
+                        : "border-[#E8DFD3] dark:border-[#38251B] opacity-65 hover:opacity-100"
                     }`}
                   >
                     <img src={imgUrl} alt="" className="max-h-full max-w-full object-contain" />
@@ -612,7 +658,7 @@ export default function StorePage() {
             {/* Info del Producto */}
             <div className="p-6 space-y-4">
               <div className="flex justify-between items-center">
-                <span className="text-xs font-bold text-[#9E816B] uppercase tracking-wider">
+                <span className="text-xs font-bold text-[#9E816B] dark:text-[#D4AF37] uppercase tracking-wider">
                   {productoModal.categoria}
                 </span>
                 {getDiscountedPrice(productoModal).hasDiscount && (
@@ -621,21 +667,25 @@ export default function StorePage() {
                   </span>
                 )}
               </div>
-              <h3 className="text-2xl font-serif font-bold text-[#382A24]">{productoModal.nombre}</h3>
-              <p className="text-sm text-[#6B5344] leading-relaxed">{productoModal.descripcion}</p>
-              <div className="flex items-center justify-between pt-4 border-t border-[#F0E8DD]">
+              <h3 id="modal-product-title" className="text-2xl font-serif font-bold text-[#382A24] dark:text-[#F3EAD8]">
+                {productoModal.nombre}
+              </h3>
+              <p className="text-sm text-[#6B5344] dark:text-[#B8A795] leading-relaxed">
+                {productoModal.descripcion}
+              </p>
+              <div className="flex items-center justify-between pt-4 border-t border-[#F0E8DD] dark:border-[#301F16]">
                 <div>
                   {getDiscountedPrice(productoModal).hasDiscount ? (
                     <div>
-                      <span className="text-xs text-[#8C7A6B] line-through block">
+                      <span className="text-xs text-[#8C7A6B] dark:text-[#9A897B] line-through block">
                         ${productoModal.precio.toLocaleString("es-AR")}
                       </span>
-                      <span className="text-2xl font-bold text-emerald-800">
+                      <span className="text-2xl font-bold text-emerald-800 dark:text-emerald-400">
                         ${getDiscountedPrice(productoModal).finalPrice.toLocaleString("es-AR")}
                       </span>
                     </div>
                   ) : (
-                    <span className="text-2xl font-bold text-[#5A3825]">
+                    <span className="text-2xl font-bold text-[#5A3825] dark:text-[#E8BD65]">
                       ${productoModal.precio.toLocaleString("es-AR")}
                     </span>
                   )}
@@ -659,29 +709,35 @@ export default function StorePage() {
 
       {/* SIDEBAR DEL CARRITO (Marrón más claro #5A3825) */}
       {carritoAbierto && (
-        <div className="fixed inset-0 z-50 overflow-hidden">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Carrito de compras"
+          className="fixed inset-0 z-50 overflow-hidden"
+        >
           <div
             className="absolute inset-0 bg-black/50 backdrop-blur-sm"
             onClick={() => setCarritoAbierto(false)}
           ></div>
           <div className="absolute inset-y-0 right-0 max-w-full flex pl-10">
-            <div className="w-screen max-w-md bg-white shadow-2xl flex flex-col">
-              <div className="p-5 bg-[#5A3825] text-[#F3EAD8] flex items-center justify-between">
+            <div className="w-screen max-w-md bg-white dark:bg-[#1B130E] shadow-2xl flex flex-col">
+              <div className="p-5 bg-[#5A3825] dark:bg-[#140E0A] text-[#F3EAD8] flex items-center justify-between border-b border-[#7A523A] dark:border-[#2D1B12]">
                 <div className="flex items-center space-x-2">
                   <ShoppingBag className="w-5 h-5 text-[#D4AF37]" />
                   <h3 className="font-serif font-bold text-lg">Tu Carrito de Compras</h3>
                 </div>
                 <button
                   onClick={() => setCarritoAbierto(false)}
+                  aria-label="Cerrar carrito de compras"
                   className="text-[#B59C8B] hover:text-white cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <div className="flex-1 overflow-y-auto p-5 space-y-4 divide-y divide-[#F0E8DD]">
+              <div className="flex-1 overflow-y-auto p-5 space-y-4 divide-y divide-[#F0E8DD] dark:divide-[#301F16]">
                 {carrito.length === 0 ? (
-                  <div className="text-center py-12 text-[#8C7A6B]">
+                  <div className="text-center py-12 text-[#8C7A6B] dark:text-[#9A897B]">
                     <ShoppingBag className="w-12 h-12 mx-auto mb-2 opacity-50" />
                     <p className="font-semibold">El carrito está vacío</p>
                     <p className="text-xs">¡Agregá productos para realizar tu pedido!</p>
@@ -692,7 +748,7 @@ export default function StorePage() {
 
                     return (
                       <div key={item.id} className="pt-4 flex items-center space-x-4">
-                        <div className="w-16 h-16 rounded-xl border border-[#E8DFD3] bg-[#F8F5F0] flex items-center justify-center p-1 shrink-0 overflow-hidden">
+                        <div className="w-16 h-16 rounded-xl border border-[#E8DFD3] dark:border-[#38251B] bg-[#F8F5F0] dark:bg-[#221812] flex items-center justify-center p-1 shrink-0 overflow-hidden">
                           <img
                             src={item.imagen}
                             alt={item.nombre}
@@ -700,13 +756,13 @@ export default function StorePage() {
                           />
                         </div>
                         <div className="flex-1">
-                          <h4 className="text-sm font-bold text-[#382A24]">{item.nombre}</h4>
+                          <h4 className="text-sm font-bold text-[#382A24] dark:text-[#F3EAD8]">{item.nombre}</h4>
                           <div className="flex items-center space-x-2">
-                            <span className="text-xs text-[#8C7A6B]">
+                            <span className="text-xs text-[#8C7A6B] dark:text-[#9A897B]">
                               ${precioUnit.toLocaleString("es-AR")}
                             </span>
                             {item.hasDiscount && (
-                              <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200">
+                              <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-1.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">
                                 -{item.discountPercent}%
                               </span>
                             )}
@@ -714,25 +770,30 @@ export default function StorePage() {
                           <div className="flex items-center space-x-2 mt-2">
                             <button
                               onClick={() => modificarCantidad(item.id, -1)}
-                              className="p-1 rounded bg-[#EFE9DF] hover:bg-[#E2D8C9] cursor-pointer"
+                              aria-label={`Disminuir cantidad de ${item.nombre}`}
+                              className="p-1 rounded bg-[#EFE9DF] dark:bg-[#281B14] hover:bg-[#E2D8C9] dark:hover:bg-[#38261C] text-[#5A3825] dark:text-[#D4AF37] cursor-pointer"
                             >
-                              <Minus className="w-3 h-3 text-[#5A3825]" />
+                              <Minus className="w-3 h-3" />
                             </button>
-                            <span className="text-xs font-bold w-4 text-center">{item.cantidad}</span>
+                            <span className="text-xs font-bold w-4 text-center text-[#382A24] dark:text-[#F3EAD8]">
+                              {item.cantidad}
+                            </span>
                             <button
                               onClick={() => modificarCantidad(item.id, 1)}
-                              className="p-1 rounded bg-[#EFE9DF] hover:bg-[#E2D8C9] cursor-pointer"
+                              aria-label={`Aumentar cantidad de ${item.nombre}`}
+                              className="p-1 rounded bg-[#EFE9DF] dark:bg-[#281B14] hover:bg-[#E2D8C9] dark:hover:bg-[#38261C] text-[#5A3825] dark:text-[#D4AF37] cursor-pointer"
                             >
-                              <Plus className="w-3 h-3 text-[#5A3825]" />
+                              <Plus className="w-3 h-3" />
                             </button>
                           </div>
                         </div>
                         <div className="text-right">
-                          <span className="text-sm font-bold block text-[#5A3825]">
+                          <span className="text-sm font-bold block text-[#5A3825] dark:text-[#E8BD65]">
                             ${(precioUnit * item.cantidad).toLocaleString("es-AR")}
                           </span>
                           <button
                             onClick={() => eliminarDelCarrito(item.id)}
+                            aria-label={`Eliminar ${item.nombre} del carrito`}
                             className="text-red-500 hover:text-red-700 mt-2 cursor-pointer"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -745,8 +806,8 @@ export default function StorePage() {
               </div>
 
               {carrito.length > 0 && (
-                <div className="p-5 border-t border-[#E8DFD3] bg-[#FDFBF7] space-y-4">
-                  <div className="flex justify-between text-base font-bold text-[#5A3825]">
+                <div className="p-5 border-t border-[#E8DFD3] dark:border-[#301F16] bg-[#FDFBF7] dark:bg-[#140E0A] space-y-4">
+                  <div className="flex justify-between text-base font-bold text-[#5A3825] dark:text-[#E8BD65]">
                     <span>Total estimado:</span>
                     <span>${totalCarrito.toLocaleString("es-AR")}</span>
                   </div>
@@ -763,6 +824,9 @@ export default function StorePage() {
           </div>
         </div>
       )}
+
+      {/* CHAT EN VIVO DE CONSULTAS FLOTANTE INTEGRADO CON WHATSAPP */}
+      <LiveChatWidget />
     </div>
   );
 }

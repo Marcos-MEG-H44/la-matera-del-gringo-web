@@ -5,10 +5,10 @@ const AuthContext = createContext(null);
 
 const LOCAL_STORAGE_AUTH_KEY = "matera_admin_session";
 
-// Credenciales por defecto para acceso administrativo en desarrollo / offline
+// Credenciales para acceso administrativo (soporta variables de entorno para producción)
 const DEFAULT_ADMIN = {
-  email: "admin@lamateradelgringo.com",
-  password: "admin",
+  email: import.meta.env.VITE_ADMIN_EMAIL || "admin@lamateradelgringo.com",
+  password: import.meta.env.VITE_ADMIN_PASSWORD || "admin",
   role: "ADMIN",
   nombre: "Marcos Godoy (Admin)"
 };

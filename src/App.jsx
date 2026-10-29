@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { DataProvider } from "./context/DataContext";
+import { ThemeProvider } from "./context/ThemeContext";
 import StorePage from "./pages/StorePage";
 import AdminLoginPage from "./pages/AdminLoginPage";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
@@ -9,9 +10,10 @@ import ProtectedRoute from "./components/admin/ProtectedRoute";
 
 export default function App() {
   return (
-    <AuthProvider>
-      <DataProvider>
-        <BrowserRouter>
+    <ThemeProvider>
+      <AuthProvider>
+        <DataProvider>
+          <BrowserRouter>
           <Routes>
             {/* Tienda Pública Principal */}
             <Route path="/" element={<StorePage />} />
@@ -37,5 +39,6 @@ export default function App() {
         </BrowserRouter>
       </DataProvider>
     </AuthProvider>
+    </ThemeProvider>
   );
 }

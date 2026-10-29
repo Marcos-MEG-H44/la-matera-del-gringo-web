@@ -12,6 +12,7 @@ import {
   Upload,
   Images
 } from "lucide-react";
+import { sanitizeText, sanitizeUrl } from "../../lib/sanitize";
 
 export default function ProductsManager({ isNewModalOpen, setIsNewModalOpen }) {
   const {
@@ -152,6 +153,11 @@ export default function ProductsManager({ isNewModalOpen, setIsNewModalOpen }) {
       return;
     }
 
+    if (/compa[ñn]er/i.test(formData.nombre) || /compa[ñn]er/i.test(formData.categoria)) {
+      setFormError("El término 'compañero/s' no está permitido en productos de la tienda.");
+      return;
+    }
+
     const precioNum = Number(formData.precio);
     if (isNaN(precioNum) || precioNum <= 0) {
       setFormError("El precio debe ser un número mayor a cero.");
@@ -174,11 +180,18 @@ export default function ProductsManager({ isNewModalOpen, setIsNewModalOpen }) {
       return;
     }
 
+    const safeImagenes = (formData.imagenes || [])
+      .map(sanitizeUrl)
+      .filter(Boolean);
+
     const dataToSave = {
       ...formData,
+      nombre: sanitizeText(formData.nombre),
+      descripcion: sanitizeText(formData.descripcion),
       precio: precioNum,
       stock: stockNum,
-      imagen: formData.imagenes[0]
+      imagenes: safeImagenes.length > 0 ? safeImagenes : [formData.imagenes[0]],
+      imagen: safeImagenes.length > 0 ? safeImagenes[0] : formData.imagenes[0]
     };
 
     if (editingProduct) {

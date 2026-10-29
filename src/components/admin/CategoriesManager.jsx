@@ -19,6 +19,11 @@ export default function CategoriesManager() {
       return;
     }
 
+    if (/compa[ñn]er/i.test(newCatLabel)) {
+      setError("El término 'compañero/s' no está permitido como categoría.");
+      return;
+    }
+
     const id = newCatLabel.trim().toLowerCase().replace(/[^a-z0-9]/g, "");
     if (categorias.some((c) => c.id === id)) {
       setError("Ya existe una categoría con un identificador similar.");

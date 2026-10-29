@@ -16,6 +16,7 @@ import {
   X,
   Database
 } from "lucide-react";
+import ThemeToggle from "../ThemeToggle";
 
 export default function AdminLayout({ activeTab, setActiveTab, children }) {
   const { user, logout } = useAuth();
@@ -38,9 +39,9 @@ export default function AdminLayout({ activeTab, setActiveTab, children }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] flex flex-col md:flex-row text-[#382A24] font-sans">
+    <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#120D0A] flex flex-col md:flex-row text-[#382A24] dark:text-[#EFE5D8] font-sans transition-colors duration-200">
       {/* Mobile Header (Marrón más claro #5A3825) */}
-      <div className="md:hidden bg-[#5A3825] text-[#F3EAD8] p-4 flex items-center justify-between border-b border-[#7A523A] sticky top-0 z-40">
+      <div className="md:hidden bg-[#5A3825] dark:bg-[#1A110B] text-[#F3EAD8] p-4 flex items-center justify-between border-b border-[#7A523A] dark:border-[#332014] sticky top-0 z-40">
         <div className="flex items-center space-x-3">
           <img
             src="/logo1.jpeg"
@@ -52,12 +53,16 @@ export default function AdminLayout({ activeTab, setActiveTab, children }) {
             <p className="text-[10px] text-[#D4AF37] uppercase tracking-wider">Panel Admin</p>
           </div>
         </div>
-        <button
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="p-2 rounded-lg bg-[#6E4933] text-[#F3EAD8] hover:bg-[#7D553D]"
-        >
-          {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
+        <div className="flex items-center space-x-2">
+          <ThemeToggle compact={true} />
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            aria-label={sidebarOpen ? "Cerrar menú lateral" : "Abrir menú lateral"}
+            className="p-2 rounded-lg bg-[#6E4933] dark:bg-[#2F1F17] text-[#F3EAD8] hover:bg-[#7D553D] cursor-pointer"
+          >
+            {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
       </div>
 
       {/* Backdrop for mobile */}
@@ -70,13 +75,13 @@ export default function AdminLayout({ activeTab, setActiveTab, children }) {
 
       {/* Sidebar Navigation (Marrón más claro #5A3825) */}
       <aside
-        className={`fixed md:sticky top-0 z-50 md:z-30 h-screen w-64 bg-[#5A3825] text-[#F3EAD8] border-r border-[#7A523A] flex flex-col justify-between transition-transform duration-300 ease-in-out ${
+        className={`fixed md:sticky top-0 z-50 md:z-30 h-screen w-64 bg-[#5A3825] dark:bg-[#1A110B] text-[#F3EAD8] border-r border-[#7A523A] dark:border-[#332014] flex flex-col justify-between transition-transform duration-300 ease-in-out ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
       >
         <div>
           {/* Brand header */}
-          <div className="p-6 border-b border-[#7A523A] hidden md:flex items-center space-x-3">
+          <div className="p-6 border-b border-[#7A523A] dark:border-[#332014] hidden md:flex items-center space-x-3">
             <img
               src="/logo1.jpeg"
               alt="Logo"
@@ -107,7 +112,7 @@ export default function AdminLayout({ activeTab, setActiveTab, children }) {
                   className={`w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
                     isActive
                       ? "bg-[#D4AF37] text-[#5A3825] shadow-md font-bold"
-                      : "text-[#E0D0C1] hover:bg-[#6E4933] hover:text-[#F3EAD8]"
+                      : "text-[#E0D0C1] hover:bg-[#6E4933] dark:hover:bg-[#2F1F17] hover:text-[#F3EAD8]"
                   }`}
                 >
                   <Icon className={`w-4 h-4 ${isActive ? "text-[#5A3825]" : "text-[#D4AF37]"}`} />
@@ -119,9 +124,9 @@ export default function AdminLayout({ activeTab, setActiveTab, children }) {
         </div>
 
         {/* Sidebar Footer */}
-        <div className="p-4 border-t border-[#7A523A] space-y-3">
+        <div className="p-4 border-t border-[#7A523A] dark:border-[#332014] space-y-3">
           {/* Status backend */}
-          <div className="p-2.5 bg-[#452C1E] rounded-xl flex items-center space-x-2 text-[11px] text-[#D0C0B0]">
+          <div className="p-2.5 bg-[#452C1E] dark:bg-[#271810] rounded-xl flex items-center space-x-2 text-[11px] text-[#D0C0B0]">
             <Database className="w-3.5 h-3.5 text-[#D4AF37] shrink-0" />
             <span className="truncate">
               {isSupabaseConfigured ? "Supabase Conectado" : "Almacenamiento Local"}
@@ -133,7 +138,7 @@ export default function AdminLayout({ activeTab, setActiveTab, children }) {
           <Link
             to="/"
             target="_blank"
-            className="w-full flex items-center justify-center space-x-2 px-3 py-2 rounded-xl text-xs font-semibold text-[#E0D0C1] hover:text-white hover:bg-[#6E4933] border border-[#7A523A] transition-colors"
+            className="w-full flex items-center justify-center space-x-2 px-3 py-2 rounded-xl text-xs font-semibold text-[#E0D0C1] hover:text-white hover:bg-[#6E4933] dark:hover:bg-[#2F1F17] border border-[#7A523A] dark:border-[#42291B] transition-colors"
           >
             <span>Ver Tienda Pública</span>
             <ExternalLink className="w-3.5 h-3.5" />
@@ -153,18 +158,20 @@ export default function AdminLayout({ activeTab, setActiveTab, children }) {
       {/* Main Content Area */}
       <main className="flex-1 min-w-0 flex flex-col min-h-screen">
         {/* Top Navbar */}
-        <header className="hidden md:flex bg-white border-b border-[#E8DFD3] px-8 py-4 items-center justify-between shadow-xs">
+        <header className="hidden md:flex bg-white dark:bg-[#1B130E] border-b border-[#E8DFD3] dark:border-[#38251B] px-8 py-4 items-center justify-between shadow-xs transition-colors">
           <div>
-            <h1 className="text-xl font-serif font-bold text-[#5A3825] capitalize">
+            <h1 className="text-xl font-serif font-bold text-[#5A3825] dark:text-[#F3EAD8] capitalize">
               {navItems.find((n) => n.id === activeTab)?.label || "Panel"}
             </h1>
-            <p className="text-xs text-[#8C7A6B]">Administración integral del catálogo y promociones</p>
+            <p className="text-xs text-[#8C7A6B] dark:text-[#9F8C7D]">Administración integral del catálogo y promociones</p>
           </div>
 
           <div className="flex items-center space-x-4">
+            <ThemeToggle />
+
             <div className="text-right">
-              <span className="text-xs font-bold text-[#5A3825] block">{user?.nombre || "Administrador"}</span>
-              <span className="text-[10px] text-[#8C7A6B] uppercase tracking-wider">{user?.email}</span>
+              <span className="text-xs font-bold text-[#5A3825] dark:text-[#F3EAD8] block">{user?.nombre || "Administrador"}</span>
+              <span className="text-[10px] text-[#8C7A6B] dark:text-[#9F8C7D] uppercase tracking-wider">{user?.email}</span>
             </div>
             <div className="w-9 h-9 rounded-full bg-[#5A3825] text-[#D4AF37] flex items-center justify-center font-bold text-sm shadow">
               MG
